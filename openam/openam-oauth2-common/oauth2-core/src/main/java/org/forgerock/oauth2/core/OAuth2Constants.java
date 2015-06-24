@@ -904,6 +904,9 @@ public class OAuth2Constants {
         public static final String JWKS = "com.forgerock.openam.oauth2provider.jwks";
         public static final String CLIENT_JWT_PUBLIC_KEY = "com.forgerock.openam.oauth2provider.clientJwtPublicKey";
         public static final String PUBLIC_KEY_SELECTOR = "com.forgerock.openam.oauth2provider.publicKeyLocation";
+        public static final String IDTOKEN_LIFE_TIME = "com.forgerock.openam.oauth2provider.idTokenLifeTime";
+        public static final String ACCESSTOKEN_LIFE_TIME = "com.forgerock.openam.oauth2provider.accessTokenLifeTime";
+        public static final String REFRESHTOKEN_LIFE_TIME = "com.forgerock.openam.oauth2provider.refreshTokenLifeTime";
     }
 
     public class JWTTokenParams {

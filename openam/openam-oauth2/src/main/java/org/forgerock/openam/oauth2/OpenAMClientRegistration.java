@@ -373,6 +373,61 @@ public class OpenAMClientRegistration implements OpenIdConnectClientRegistration
         return clientType;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public Long getIdTokenLifeTime() {
+        try {
+            Set<String> lifeTimeSet = amIdentity.getAttribute(OAuth2Constants.OAuth2Client.IDTOKEN_LIFE_TIME);
+            if (lifeTimeSet == null || lifeTimeSet.isEmpty()) {
+                return null;
+            }
+
+            return Long.parseLong(lifeTimeSet.iterator().next());
+        } catch (Exception e) {
+            logger.error("Unable to get " + OAuth2Constants.OAuth2Client.IDTOKEN_LIFE_TIME + " from repository", e);
+            throw OAuthProblemException.OAuthError.SERVER_ERROR.handle(Request.getCurrent(), "Unable to get "
+                    + OAuth2Constants.OAuth2Client.IDTOKEN_LIFE_TIME + " from repository");
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Long getAccessTokenLifeTime() {
+        try {
+            Set<String> lifeTimeSet = amIdentity.getAttribute(OAuth2Constants.OAuth2Client.ACCESSTOKEN_LIFE_TIME);
+            if (lifeTimeSet == null || lifeTimeSet.isEmpty()) {
+                return null;
+            }
+
+            return Long.parseLong(lifeTimeSet.iterator().next());
+        } catch (Exception e) {
+            logger.error("Unable to get " + OAuth2Constants.OAuth2Client.ACCESSTOKEN_LIFE_TIME + " from repository", e);
+            throw OAuthProblemException.OAuthError.SERVER_ERROR.handle(Request.getCurrent(), "Unable to get "
+                    + OAuth2Constants.OAuth2Client.ACCESSTOKEN_LIFE_TIME + " from repository");
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Long getRefreshTokenLifeTime() {
+        try {
+            Set<String> refreshTokenValidPeriodSet = amIdentity
+                    .getAttribute(OAuth2Constants.OAuth2Client.REFRESHTOKEN_LIFE_TIME);
+            if (refreshTokenValidPeriodSet == null || refreshTokenValidPeriodSet.isEmpty()) {
+                return null;
+            }
+
+            return Long.parseLong(refreshTokenValidPeriodSet.iterator().next());
+        } catch (Exception e) {
+            logger.error("Unable to get " + OAuth2Constants.OAuth2Client.REFRESHTOKEN_LIFE_TIME + " from repository", e);
+            throw OAuthProblemException.OAuthError.SERVER_ERROR.handle(Request.getCurrent(), "Unable to get "
+                    + OAuth2Constants.OAuth2Client.REFRESHTOKEN_LIFE_TIME + " from repository");
+        }
+    }
+
     private Set<String> convertAttributeValues(Set<String> input) {
         Set<String> result = new HashSet<String>();
         for (String param : input) {

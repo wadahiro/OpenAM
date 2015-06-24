@@ -478,6 +478,34 @@
                         </DefaultValues>
                     </AttributeSchema>
 
+                    <AttributeSchema
+                            name="com.forgerock.openam.oauth2provider.idTokenLifeTime"
+                            type="single"
+                            syntax="string"
+                            i18nKey="a788">
+                        <DefaultValues>
+                            <Value></Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                            name="com.forgerock.openam.oauth2provider.accessTokenLifeTime"
+                            type="single"
+                            syntax="string"
+                            i18nKey="a789">
+                        <DefaultValues>
+                            <Value></Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                            name="com.forgerock.openam.oauth2provider.refreshTokenLifeTime"
+                            type="single"
+                            syntax="string"
+                            i18nKey="a790">
+                        <DefaultValues>
+                            <Value></Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+
                 </SubSchema>
 
                 <SubSchema name="WebAgent" inheritance="multiple">

@@ -61,5 +61,24 @@ public interface OpenIdConnectClientRegistration extends ClientRegistration {
      */
     String getSubValue(String id, OAuth2ProviderSettings providerSettings);
 
+    /**
+     * Gets ID Token life time (second).
+     * 
+     * @return period (second). if no setting, value is null.
+     */
+    Long getIdTokenLifeTime();
 
+    /**
+     * Gets Access Token life time (second).
+     * 
+     * @return period (second). if no setting, value is null.
+     */
+    Long getAccessTokenLifeTime();
+
+    /**
+     * Gets Refresh Token life time (second).
+     * 
+     * @return period (second). if no setting, value is null.
+     */
+    Long getRefreshTokenLifeTime();
 }

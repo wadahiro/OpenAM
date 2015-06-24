@@ -186,7 +186,10 @@ public class OpenAMTokenStore implements OpenIdConnectTokenStore {
         final String algorithm = clientRegistration.getIDTokenSignedResponseAlgorithm();
 
         final long currentTimeInSeconds = System.currentTimeMillis() / 1000;
-        final long tokenLifetimeInSeconds = providerSettings.getOpenIdTokenLifetime();
+        Long tokenLifetimeInSeconds = clientRegistration.getIdTokenLifeTime();
+        if (tokenLifetimeInSeconds == null) {
+            tokenLifetimeInSeconds = providerSettings.getOpenIdTokenLifetime();
+        }
         final long exp = currentTimeInSeconds + tokenLifetimeInSeconds;
 
         final String realm = realmNormaliser.normalise(request.<String>getParameter(REALM));
@@ -418,9 +421,21 @@ public class OpenAMTokenStore implements OpenIdConnectTokenStore {
             RefreshToken refreshToken, String nonce, String claims, OAuth2Request request)
             throws ServerException, NotFoundException {
 
+        OpenIdConnectClientRegistration clientRegistration = null;
+        try {
+            clientRegistration = clientRegistrationStore.get(clientId, request);
+        } catch (InvalidClientException e) {
+            logger.error(e.getMessage(), e);
+            throw new ServerException(e.getMessage());
+        }
+
         final OAuth2ProviderSettings providerSettings = providerSettingsFactory.get(request);
         final String id = UUID.randomUUID().toString();
-        final long expiryTime = (providerSettings.getAccessTokenLifetime() * 1000) + System.currentTimeMillis();
+        Long tokenLifetimeInSeconds = clientRegistration.getAccessTokenLifeTime();
+        if (tokenLifetimeInSeconds == null) {
+            tokenLifetimeInSeconds = providerSettings.getAccessTokenLifetime();
+        }
+        final long expiryTime = tokenLifetimeInSeconds * 1000 + System.currentTimeMillis();
         final AccessToken accessToken;
         if (refreshToken == null) {
             accessToken = new OpenAMAccessToken(id, authorizationCode, resourceOwnerId, clientId, redirectUri,
@@ -457,14 +472,22 @@ public class OpenAMTokenStore implements OpenIdConnectTokenStore {
     public RefreshToken createRefreshToken(String grantType, String clientId, String resourceOwnerId,
             String redirectUri, Set<String> scope, OAuth2Request request)
             throws ServerException, NotFoundException {
-
-        final String realm = realmNormaliser.normalise(request.<String>getParameter(REALM));
-
         logger.message("Create refresh token");
-        final OAuth2ProviderSettings providerSettings = providerSettingsFactory.get(request);
 
-        final String id = UUID.randomUUID().toString();
-        final long expiryTime = (providerSettings.getRefreshTokenLifetime() * 1000) + System.currentTimeMillis();
+        OpenIdConnectClientRegistration clientRegistration = null;
+        try {
+            clientRegistration = clientRegistrationStore.get(clientId, request);
+        } catch (InvalidClientException e) {
+            logger.error(e.getMessage(), e);
+            throw new ServerException(e.getMessage());
+        }
+
+        final OAuth2ProviderSettings providerSettings = providerSettingsFactory.get(request);
+        Long tokenLifetimeInSeconds = clientRegistration.getRefreshTokenLifeTime();
+        if (tokenLifetimeInSeconds == null) {
+            tokenLifetimeInSeconds = providerSettings.getRefreshTokenLifetime();
+        }
+        final long expiryTime = tokenLifetimeInSeconds * 1000 + System.currentTimeMillis();
         AuthorizationCode token = request.getToken(AuthorizationCode.class);
         String authModules = null;
         String acr = null;
@@ -472,6 +495,9 @@ public class OpenAMTokenStore implements OpenIdConnectTokenStore {
             authModules = token.getAuthModules();
             acr = token.getAuthenticationContextClassReference();
         }
+
+        final String realm = realmNormaliser.normalise(request.<String>getParameter(REALM));
+        final String id = UUID.randomUUID().toString();
 
         RefreshToken refreshToken = new OpenAMRefreshToken(id, resourceOwnerId, clientId, redirectUri, scope,
                 expiryTime, OAuth2Constants.Bearer.BEARER, OAuth2Constants.Token.OAUTH_REFRESH_TOKEN, grantType,
